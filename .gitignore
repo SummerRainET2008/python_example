@@ -1,0 +1,12 @@
+spell
+.DS_Store
+*.swp
+*.pyc
+.netrwhist
+*.class
+.project
+.settings/*
+.idea
+*.iml
+META-INF
+updateToServer.sh
