@@ -3,7 +3,6 @@
 #author: Tian Xia (summer.xia1@pactera.com)
 
 from algorithm_3x import *
-from pylab import figure, axes, pie, title, show, savefig
 import matplotlib
 
 if __name__ == "__main__":
@@ -16,6 +15,7 @@ if __name__ == "__main__":
 
   #sometimes it is required.
   matplotlib.use('Agg')
+  from pylab import figure, axes, pie, title, show, savefig
 
   figure(1, figsize=(6, 6))
   ax = axes([0.1, 0.1, 0.8, 0.8])
