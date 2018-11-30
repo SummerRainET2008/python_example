@@ -62,11 +62,10 @@ if __name__ == "__main__":
   for idx, (file_name, seconds) in enumerate(zip(file_names, durations)):
     if seconds < 0:
       error_file_num += 1
-      print(f"unknow music format: '{idx}:{file_name}'")
       continue
 
     time_str = music_common.seconds_to_str(seconds)
-    print(f"'{idx}:{file_name}': {time_str}")
+    # print(f"'{idx}:{file_name}': {time_str}")
 
     total_seconds[get_file_extension(file_name)] += seconds
 
