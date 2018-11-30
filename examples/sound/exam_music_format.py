@@ -4,17 +4,27 @@
 
 from algorithm_3x import *
 from mutagen.mp3 import MP3
+from mutagen.flac import *
 import examples.sound.common as music_common
 import Common as nlp_common
 from multiprocessing import Pool
 
 def get_music_lenght(file_name: str):
   ext = file_name.rpartition(".")[-1].lower()
-  if ext == "mp3":
-    audio = MP3(file_name)
-    return audio.info.length
+  try:
+    if ext == "mp3":
+      audio = MP3(file_name)
+      return audio.info.length
 
-  else:
+    elif ext == "flac":
+      audio = FLAC(file_name)
+      return audio.info.length
+
+    else:
+      return -1
+
+  except:
+    print(f"Exception occurred in reading '{file_name}'")
     return -1
 
 if __name__ == "__main__":
@@ -26,8 +36,9 @@ if __name__ == "__main__":
   parser.add_option("--folder")
   (options, args) = parser.parse_args()
 
+  file_exts = ["mp3", "flac"]
   file_names = nlp_common.get_files_in_folder(options.folder,
-                                              file_exts=["mp3"],
+                                              file_exts=file_exts,
                                               resursive=True)
   file_names = list(file_names)
   print(f"There are {len(file_names)} files found.")
