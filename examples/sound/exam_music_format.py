@@ -4,9 +4,11 @@
 
 from algorithm_3x import *
 from mutagen.mp3 import MP3
+import examples.sound.common as music_common
+import Common as nlp_common
 
 def get_music_lenght(file_name: str):
-  ext = file_name.partition(".")[-1].lower()
+  ext = file_name.rpartition(".")[-1].lower()
   if ext == "mp3":
     audio = MP3(file_name)
     return audio.info.length
@@ -20,17 +22,23 @@ if __name__ == "__main__":
   parser = optparse.OptionParser(usage="cmd [optons] ..]")
   #parser.add_option("-q", "--quiet", action="store_true", dest="verbose",
                      #default=False, help="")
+  parser.add_option("--folder")
   (options, args) = parser.parse_args()
 
+  file_names = nlp_common.get_files_in_folder(options.folder,
+                                              file_exts=["mp3"], resursive=True)
+
   total_seconds = 0
-  for file_name in args:
+  for idx, file_name in enumerate(file_names):
     seconds = get_music_lenght(file_name)
     if seconds < 0:
-      print(f"unknow music format: '{file_name}'")
+      print(f"unknow music format: '{idx}:{file_name}'")
       continue
 
     total_seconds += seconds
-    print(f"'{file_name}' lasts {seconds / 60:.3} minutes.")
+    time_str = music_common.seconds_to_str(seconds)
+    print(f"'{idx}:{file_name}': {time_str}")
 
-  print(f"#time: {total_seconds / 60:.3} minutes.")
+  time_str = music_common.seconds_to_str(total_seconds)
+  print(f"#time: {time_str}")
 
