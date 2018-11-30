@@ -6,6 +6,7 @@ from algorithm_3x import *
 from mutagen.mp3 import MP3
 import examples.sound.common as music_common
 import Common as nlp_common
+from multiprocessing import Pool
 
 def get_music_lenght(file_name: str):
   ext = file_name.rpartition(".")[-1].lower()
@@ -26,11 +27,14 @@ if __name__ == "__main__":
   (options, args) = parser.parse_args()
 
   file_names = nlp_common.get_files_in_folder(options.folder,
-                                              file_exts=["mp3"], resursive=True)
+                                              file_exts=["mp3"],
+                                              resursive=True)
+  file_names = list(file_names)
+  print(f"There are {len(file_names)} files found.")
+  durations = Pool().map(get_music_lenght, file_names)
 
   total_seconds = 0
-  for idx, file_name in enumerate(file_names):
-    seconds = get_music_lenght(file_name)
+  for idx, (file_name, seconds) in enumerate(zip(file_names, durations)):
     if seconds < 0:
       print(f"unknow music format: '{idx}:{file_name}'")
       continue
