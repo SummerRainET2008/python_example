@@ -13,8 +13,13 @@ import audioread
 AUDIO_EXTENSIONS = [
   "mp3",
   "flac",
-  "wav"
+  "wav",
+  "sph"
 ]
+
+STATUS_ERROR          = -1
+STATUS_PROCESSED_SPH  = -2
+STATUS_UNKNOWN        = -3
 
 def get_file_extension(file_name: str):
   return file_name.rpartition(".")[-1].lower()
@@ -34,12 +39,22 @@ def get_music_lenght(file_name: str):
       audio = audioread.audio_open(file_name)
       return audio.duration
 
+    elif ext == "sph":
+      new_file = f"{file_name}.wav"
+      if os.path.exists(new_file):
+        return STATUS_PROCESSED_SPH
+
+      cmd = f"sox {file_name} {new_file}"
+      executeCmd(cmd)
+
+      return get_music_lenght(new_file)
+
     else:
-      return -1
+      return STATUS_UNKNOWN
 
   except:
     print(f"Exception occurred in reading '{file_name}'")
-    return -1
+    return STATUS_ERROR
 
 if __name__ == "__main__":
   os.system("clear")
@@ -61,7 +76,9 @@ if __name__ == "__main__":
   error_file_num = 0
   for idx, (file_name, seconds) in enumerate(zip(file_names, durations)):
     if seconds < 0:
-      error_file_num += 1
+      if seconds in [STATUS_ERROR, STATUS_UNKNOWN]:
+        error_file_num += 1
+
       continue
 
     time_str = music_common.seconds_to_str(seconds)
