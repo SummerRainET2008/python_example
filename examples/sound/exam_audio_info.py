@@ -45,9 +45,14 @@ def get_music_lenght(file_name: str):
         return STATUS_PROCESSED_SPH
 
       cmd = f"sox {file_name} {new_file}"
-      executeCmd(cmd)
+      if executeCmd(cmd) == 0:
+        return get_music_lenght(new_file)
 
-      return get_music_lenght(new_file)
+      cmd = "sph2pipe -f rif {file_name} {new_file}"
+      if executeCmd(cmd) == 0:
+        return get_music_lenght(new_file)
+
+      return STATUS_ERROR
 
     else:
       return STATUS_UNKNOWN
