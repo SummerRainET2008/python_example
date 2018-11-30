@@ -8,9 +8,19 @@ from mutagen.flac import *
 import examples.sound.common as music_common
 import Common as nlp_common
 from multiprocessing import Pool
+import audioread
+
+AUDIO_EXTENSIONS = [
+  "mp3",
+  "flac",
+  "wav"
+]
+
+def get_file_extension(file_name: str):
+  return file_name.rpartition(".")[-1].lower()
 
 def get_music_lenght(file_name: str):
-  ext = file_name.rpartition(".")[-1].lower()
+  ext = get_file_extension(file_name)
   try:
     if ext == "mp3":
       audio = MP3(file_name)
@@ -19,6 +29,10 @@ def get_music_lenght(file_name: str):
     elif ext == "flac":
       audio = FLAC(file_name)
       return audio.info.length
+
+    elif ext == "wav":
+      audio = audioread.audio_open(file_name)
+      return audio.duration
 
     else:
       return -1
@@ -36,24 +50,29 @@ if __name__ == "__main__":
   parser.add_option("--folder")
   (options, args) = parser.parse_args()
 
-  file_exts = ["mp3", "flac"]
   file_names = nlp_common.get_files_in_folder(options.folder,
-                                              file_exts=file_exts,
+                                              file_exts=AUDIO_EXTENSIONS,
                                               resursive=True)
   file_names = list(file_names)
   print(f"There are {len(file_names)} files found.")
   durations = Pool().map(get_music_lenght, file_names)
 
-  total_seconds = 0
+  total_seconds = defaultdict(float)
+  error_file_num = 0
   for idx, (file_name, seconds) in enumerate(zip(file_names, durations)):
     if seconds < 0:
+      error_file_num += 1
       print(f"unknow music format: '{idx}:{file_name}'")
       continue
 
-    total_seconds += seconds
     time_str = music_common.seconds_to_str(seconds)
     print(f"'{idx}:{file_name}': {time_str}")
 
-  time_str = music_common.seconds_to_str(total_seconds)
-  print(f"#time: {time_str}")
+    total_seconds[get_file_extension(file_name)] += seconds
+
+  print(f"#exception files: {error_file_num}")
+  for ext in total_seconds:
+    seconds = total_seconds[ext]
+    time_str = music_common.seconds_to_str(seconds)
+    print(f"type='{ext}', #time: {time_str}")
 
