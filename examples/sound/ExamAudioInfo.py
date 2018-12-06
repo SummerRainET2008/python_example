@@ -5,52 +5,57 @@
 from algorithm_3x import *
 from mutagen.mp3 import MP3
 from mutagen.flac import *
-import examples.sound.common as music_common
+import examples.sound.Common as music_common
 import Common as nlp_common
 from multiprocessing import Pool
 import audioread
 
 AUDIO_EXTENSIONS = [
-  "mp3",
+  "mp3",      # converted to wav
   "flac",
   "wav",
-  "sph"
+  "sph",      # converted to wav
 ]
 
 STATUS_ERROR          = -1
-STATUS_PROCESSED_SPH  = -2
 STATUS_UNKNOWN        = -3
 
-def get_file_extension(file_name: str):
-  return file_name.rpartition(".")[-1].lower()
-
-def get_music_lenght(file_name: str):
-  ext = get_file_extension(file_name)
+def get_music_length(in_file: str):
+  ext = nlp_common.get_file_extension(in_file)
   try:
     if ext == "mp3":
-      audio = MP3(file_name)
-      return audio.info.length
+      audio = MP3(in_file)
+
+      out_file = in_file + ".wav"
+      if os.path.exists(out_file):
+        return get_music_length(out_file)
+
+      cmd = f"ffmpeg -i {in_file} {out_file}"
+      if executeCmd(cmd) == 0:
+        return audio.info.length
+      else:
+        return STATUS_ERROR
 
     elif ext == "flac":
-      audio = FLAC(file_name)
+      audio = FLAC(in_file)
       return audio.info.length
 
     elif ext == "wav":
-      audio = audioread.audio_open(file_name)
+      audio = audioread.audio_open(in_file)
       return audio.duration
 
     elif ext == "sph":
-      new_file = f"{file_name}.wav"
-      if os.path.exists(new_file):
-        return STATUS_PROCESSED_SPH
+      out_file = f"{in_file}.wav"
+      if os.path.exists(out_file):
+        return get_music_length(out_file)
 
-      cmd = f"sox {file_name} {new_file}"
+      cmd = f"sox {in_file} {out_file}"
       if executeCmd(cmd) == 0:
-        return get_music_lenght(new_file)
+        return get_music_length(out_file)
 
-      cmd = "sph2pipe -f rif {file_name} {new_file}"
+      cmd = "sph2pipe -f rif {file_name} {out_file}"
       if executeCmd(cmd) == 0:
-        return get_music_lenght(new_file)
+        return get_music_length(out_file)
 
       return STATUS_ERROR
 
@@ -58,7 +63,7 @@ def get_music_lenght(file_name: str):
       return STATUS_UNKNOWN
 
   except:
-    print(f"Exception occurred in reading '{file_name}'")
+    print(f"Exception occurred in reading '{in_file}'")
     return STATUS_ERROR
 
 if __name__ == "__main__":
@@ -75,7 +80,8 @@ if __name__ == "__main__":
                                               resursive=True)
   file_names = list(file_names)
   print(f"There are {len(file_names)} files found.")
-  durations = Pool().map(get_music_lenght, file_names)
+
+  durations = Pool().map(get_music_length, file_names)
 
   total_seconds = defaultdict(float)
   error_file_num = 0
@@ -89,7 +95,7 @@ if __name__ == "__main__":
     time_str = music_common.seconds_to_str(seconds)
     # print(f"'{idx}:{file_name}': {time_str}")
 
-    total_seconds[get_file_extension(file_name)] += seconds
+    total_seconds[nlp_common.get_file_extension(file_name)] += seconds
 
   print(f"#exception files: {error_file_num}")
   for ext in total_seconds:
