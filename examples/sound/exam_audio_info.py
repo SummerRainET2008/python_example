@@ -4,11 +4,11 @@
 
 from mutagen.mp3 import MP3
 from mutagen.flac import *
-from Common import *
+from common import *
 from multiprocessing import Pool
 import audioread
 import typing
-from audio.AudioHelper import AudioHelper
+from audio.audio_helper import AudioHelper
 
 def convert(in_file: str):
   return in_file, AudioHelper.convert_to_flac(in_file)
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
   good_files = [out_file for in_file, out_file in out if out_file is not None]
   all_lengths = Pool().map(get_file_length, good_files)
-  print(all_lengths)
+  # print(all_lengths)
   total_seconds = sum(all_lengths)
   print(f"total length: {AudioHelper.seconds_to_str(total_seconds)}")
 
