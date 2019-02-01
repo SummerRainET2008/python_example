@@ -28,7 +28,7 @@ def save_to_file(samples: list, file_name: str):
     feature = {
       'file': _bytes_feature(file_name.encode("utf8")),
       'label': _int64_feature(label),
-      "mfcc": _bytes_feature(mfcc.tostring()),
+      "mfcc": _bytes_feature(mfcc.tobytes()),
     }
     example_proto = tf.train.Example(
       features=tf.train.Features(feature=feature)
