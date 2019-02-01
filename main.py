@@ -2,7 +2,7 @@
 #coding: utf8
 #author: Tian Xia (summer.xia1@pactera.com)
 
-import common as nlp
+import pa_nlp.common as nlp
 import optparse
 import os
 
