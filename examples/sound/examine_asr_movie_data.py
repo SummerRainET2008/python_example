@@ -10,9 +10,9 @@ import collections
 import os
 
 def check_1(folder: str):
-  mp3_files = [os.path.basename(fn)
+  mp3_files = [os.path.basename(fn).rpartition(".")[0]
                for fn in nlp.get_files_in_folder(folder, ["mp3"])]
-  txt_files = [os.path.basename(fn)
+  txt_files = [os.path.basename(fn).rpartition(".")[0]
                for fn in nlp.get_files_in_folder(folder, ["txt"])]
 
   mp3_counts = collections.Counter(mp3_files)
