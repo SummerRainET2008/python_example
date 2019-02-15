@@ -7,11 +7,12 @@ import multiprocessing as mp
 from pa_nlp.audio.audio_helper import AudioHelper
 import optparse
 import collections
+import os
 
-def check_1(folder):
-  mp3_files = [nlp.get_file_base(fn)
+def check_1(folder: str):
+  mp3_files = [os.path.basename(fn)
                for fn in nlp.get_files_in_folder(folder, ["mp3"])]
-  txt_files = [nlp.get_file_base(fn)
+  txt_files = [os.path.basename(fn)
                for fn in nlp.get_files_in_folder(folder, ["txt"])]
 
   mp3_counts = collections.Counter(mp3_files)
