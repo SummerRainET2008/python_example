@@ -2,7 +2,7 @@
 #coding: utf8
 #author: Tian Xia (summer.xia1@pactera.com)
 
-from algorithm_3x import *
+from pa_nlp import *
 import matplotlib
 
 if __name__ == "__main__":
