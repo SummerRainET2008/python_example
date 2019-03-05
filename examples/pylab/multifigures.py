@@ -1,15 +1,16 @@
-from pylab import figure, show, plot
+from examples.pylab import *
 
-figure(0)
-plot([1,2,3])
+if __name__ == "__main__":
+  pylab.figure(0)
+  pylab.plot([1,2,3])
 
-figure(1)
-plot([10, 20, 30])
+  pylab.figure(1)
+  pylab.plot([10, 20, 30])
 
-figure(0)
-plot([4, 5, 6])
+  pylab.figure(0)
+  pylab.plot([4, 5, 6])
 
-figure(1)
-plot([40, 50, 60])
+  pylab.figure(1)
+  pylab.plot([40, 50, 60])
 
-show()
+  pylab.show()

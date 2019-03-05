@@ -1,6 +1,6 @@
-try:
-  import pylab
+from examples.pylab import *
 
+if __name__ == "__main__":
   data1 = [1, 2, 3, 4]
   pylab.plot(data1, label="data1")
   data2 = [2, 5, 7, 8]
@@ -13,6 +13,3 @@ try:
   pylab.legend()
   pylab.grid()
   pylab.show()
-
-except:
-  pass
