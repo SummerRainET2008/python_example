@@ -1,8 +1,8 @@
 #coding: utf8
 #author: Tian Xia (summer.xia1@pactera.com)
 
-from algorithm_3x import *
-import abc
+from examples.py import *
+# import abc
 
 # abc.abstractstaticmethod: deprecated.
 # Use 'staticmethod' with 'abstractmethod' instead.
